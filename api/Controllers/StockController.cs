@@ -7,6 +7,7 @@ using api.Data;
 using api.Mappers;
 using api.Dtos.Stock;
 using Microsoft.EntityFrameworkCore;
+using api.Interfaces;
 
 
 
@@ -16,19 +17,21 @@ namespace api.Controllers
     [ApiController]
     public class StockController : ControllerBase
     {
-        public StockController(ApplicationDbContext context)
+        public StockController(ApplicationDbContext context, IStockRepository stockRepo)
         {
+            _StockRepo = stockRepo;
             _Context = context;
         }
 
         private readonly ApplicationDbContext _Context;
+        private readonly IStockRepository _StockRepo;
 
         // Add your action methods here, e.g., Get, Post, Put, Delete
         // Example:
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var stocks = await _Context.Stock.ToListAsync();
+            var stocks = await _StockRepo.GetAllAsync();
             var stocksDb = stocks.Select(s => s.ToStockDto());
             return Ok(stocksDb);
         }
