@@ -46,7 +46,7 @@ namespace api.Repository
             return await _Context.Stock.Include(c => c.Comments).ToListAsync(); // ✅ Must return the Task
         }
 
-        public async  Task<List<Stock>> GetAllAsync(QueryObject query)
+        public async Task<List<Stock>> GetAllAsync(QueryObject query)
         {
             var stocks = _Context.Stock.Include(c => c.Comments).AsQueryable();
             if (!string.IsNullOrWhiteSpace(query.Symbol))
@@ -64,17 +64,19 @@ namespace api.Repository
             }
 
             if (!string.IsNullOrWhiteSpace(query.CompanyName))
-                {
-                    stocks = stocks.Where(s => s.CompanyName.Contains(query.CompanyName));
-                }
-            
-            
-            return await stocks.ToListAsync();
+            {
+                stocks = stocks.Where(s => s.CompanyName.Contains(query.CompanyName));
+            }
+
+            var SkipNumber = (query.PageNumber - 1) * query.PageSize;
+
+
+            return await stocks.Skip(SkipNumber).Take(query.PageSize).ToListAsync();
         }
 
         public async Task<Stock?> GetByIdAsync(int id)
         {
-            var  stockModel = await _Context.Stock.Include(c => c.Comments).FirstOrDefaultAsync(s => s.Id == id);
+            var stockModel = await _Context.Stock.Include(c => c.Comments).FirstOrDefaultAsync(s => s.Id == id);
 
             if (stockModel == null)
             {
@@ -86,7 +88,7 @@ namespace api.Repository
         public async Task<bool> IsStockExistsAsync(int id)
         {
             return await _Context.Stock.AnyAsync(s => s.Id == id);
-            
+
         }
 
         public async Task<Stock?> UpdateAsync(int id, UpdateStockRequestDto updateDto)
