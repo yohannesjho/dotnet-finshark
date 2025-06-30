@@ -12,5 +12,7 @@ namespace api.Interfaces
         Task<List<Comment>> GetCommentAsync();
 
         Task<Comment?> GetCommentById(int id);
+
+        Task<Comment> CreateCommentAsync(Comment commentModel);
     }
 }

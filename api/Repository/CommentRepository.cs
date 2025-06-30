@@ -18,6 +18,15 @@ namespace api.Repository
         {
             _Context = context;
         }
+
+        public async Task<Comment> CreateCommentAsync(Comment commentModel)
+        {
+
+            await _Context.Comment.AddAsync(commentModel);
+            await _Context.SaveChangesAsync();
+            return commentModel;
+        }
+
         public async Task<List<Comment>> GetCommentAsync()
         {
             return await _Context.Comment.ToListAsync();
@@ -27,9 +36,7 @@ namespace api.Repository
         public async Task<Comment?> GetCommentById(int id)
         {
             return await _Context.Comment.FirstOrDefaultAsync(c => c.Id == id);
-                 
-                
-                
+                       
         }
     }
 }
