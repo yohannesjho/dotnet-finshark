@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api.Data;
+using api.Dtos.Comment;
 using api.Dtos.Stock;
 using api.Interfaces;
 using api.Models;
@@ -37,6 +38,20 @@ namespace api.Repository
         {
             return await _Context.Comment.FirstOrDefaultAsync(c => c.Id == id);
                        
+        }
+
+        public async Task<Comment?> UpdateCommentAsync(int id, UpdateCommentDto commentDto)
+        {
+            var commentModel = await _Context.Comment.FirstOrDefaultAsync(c => c.Id == id);
+            if (commentModel == null)
+            {
+                return null;
+            }
+
+            commentModel.Title = commentDto.Title;
+            commentModel.Content = commentDto.Content;
+            _Context.SaveChanges();
+            return commentModel;
         }
     }
 }
