@@ -8,6 +8,7 @@ using api.Mappers;
 using api.Dtos.Stock;
 using Microsoft.EntityFrameworkCore;
 using api.Interfaces;
+using api.Helper;
 
 
 
@@ -29,11 +30,10 @@ namespace api.Controllers
         // Add your action methods here, e.g., Get, Post, Put, Delete
         // Example:
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] QueryObject query)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            var stocks = await _StockRepo.GetAllAsync();
+            
+            var stocks = await _StockRepo.GetAllAsync(query);
             var stocksDb = stocks.Select(s => s.ToStockDto());
             return Ok(stocksDb);
         }
@@ -64,7 +64,7 @@ namespace api.Controllers
         }
 
         [HttpPut]
-        [Route("{id: int}")]
+        [Route("{id:int}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateStockRequestDto updateDto)
         {
             if (!ModelState.IsValid)
